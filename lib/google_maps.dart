@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
@@ -10,25 +11,24 @@ class GoogleMaps extends StatefulWidget {
 }
 
 class _GoogleMapsState extends State<GoogleMaps> {
-  LocationData currentLocation;                                              // 追加
+  LocationData currentLocation;
+
   // StreamSubscription<LocationData> locationSubscription;
 
-  Location _locationService = new Location();                                 // 追加
-  String error;                                                               // 追加
+  Location _locationService = new Location();
+  String error;
 
-  @override                                                                   // 追加
-  void initState() {                                                          // 追加
-    super.initState();                                                        // 追加
+  @override
+  void initState() {
+    super.initState();
 
-    initPlatformState();                                                      // 追加
-    _locationService.onLocationChanged().listen((LocationData result) async { // 追加
-      setState(() {                                                           // 追加
-        currentLocation = result;                                             // 追加
-      });                                                                     // 追加
-    });                                                                       // 追加
-  }                                                                           // 追加
-
-
+    initPlatformState();
+    _locationService.onLocationChanged().listen((LocationData result) async {
+      setState(() {
+        currentLocation = result;
+      });
+    });
+  }
 
   Completer<GoogleMapController> _controller = Completer();
 
@@ -38,20 +38,46 @@ class _GoogleMapsState extends State<GoogleMaps> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Flutter Maps"),
-        ),
-        body: GoogleMap(
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(
-            // 最初のカメラ位置
-            target: LatLng(34.643208, 134.997586),
-            zoom: 17.0,
+    if (currentLocation == null) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    } else {
+      return MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(
+            title: Text('Maps Sample App'),
+            backgroundColor: Colors.green[700],
+          ),
+          body: GoogleMap(
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target:
+                  LatLng(currentLocation.latitude, currentLocation.longitude),
+              zoom: 17.0,
+            ),
+            myLocationEnabled: true,
           ),
         ),
-      ),
-    );
+      );
+    }
+  }
+
+  void initPlatformState() async {
+    LocationData myLocation;
+    try {
+      myLocation = await _locationService.getLocation();
+      error = "";
+    } on PlatformException catch (e) {
+      if (e.code == 'PERMISSION_DENITED')
+        error = 'Permission denited';
+      else if (e.code == 'PERMISSION_DENITED_NEVER_ASK')
+        error =
+            'Permission denited - please ask the user to enable it from the app settings';
+      myLocation = null;
+    }
+    setState(() {
+      currentLocation = myLocation;
+    });
   }
 }
