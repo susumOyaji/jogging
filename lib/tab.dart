@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lib/screens/location.dart'
-
+import 'package:jogging/screens/location.dart';
 
 class TabUI extends StatelessWidget {
   final List<Widget> _tabs = [
@@ -18,7 +17,7 @@ class TabUI extends StatelessWidget {
             bottom: TabBar(
               tabs: _tabs,
             ),
-            title: Text('Learn Flutter'),
+            title: Text('GPS Flutter'),
             backgroundColor: Colors.green[200],
           ),
           body: TabBarView(

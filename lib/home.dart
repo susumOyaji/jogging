@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:learning/tab.dart';
+import 'package:jogging/tab.dart';
 
 class Home extends StatelessWidget {
   @override

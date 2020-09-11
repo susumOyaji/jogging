@@ -16,6 +16,10 @@ class _LocationSampleState extends State<LocationSample> {
     _getLocation(context);
   }
 
+  Future<void> _radry() async {
+    //bool isLocationServiceEnabled = await isLocationServiceEnabled();
+  }
+
   Future<void> _getLocation(context) async {
     Position _currentPosition = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
